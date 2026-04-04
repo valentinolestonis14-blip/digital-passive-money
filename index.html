@@ -17,12 +17,12 @@
 <!-- HERO -->
 <section class="bg-gradient-to-r from-green-800 to-green-500 text-white text-center p-14 fade-in">
   <div class="text-6xl mb-4">💸🇵🇭</div>
-  <h1 class="text-5xl font-bold mb-3">Digital Passive Money</h1>
+  <h1 class="text-4xl font-bold">Digital Passive Money</h1>
   <p class="text-lg">Turn ChatGPT into your income source</p>
   <p class="mt-2 text-sm">By LESTONES TIN | Partner: ChatGPT</p>
 </section>
 
-<!-- VALUE -->
+<!-- VALUE SECTION -->
 <section class="p-10 max-w-6xl mx-auto text-center">
   <h2 class="text-3xl font-bold text-green-700 mb-8">Why This eBook?</h2>
   <div class="grid md:grid-cols-3 gap-6">
@@ -55,112 +55,84 @@
   </div>
 </section>
 
-<!-- BUY -->
-<section id="buy" class="p-10 max-w-3xl mx-auto">
-  <div class="bg-white p-10 rounded-2xl shadow text-center">
-    <h2 class="text-3xl font-bold text-green-700">💰 Get Full eBook</h2>
-    <p class="mt-2">Start your digital income journey today</p>
-    <p class="text-3xl font-bold text-green-700 mt-4">₱99</p>
+<!-- BUY SECTION -->
+<section class="p-10 max-w-3xl mx-auto text-center">
+  <h2 class="text-3xl font-bold text-green-700">💰 Get Full eBook</h2>
+  <p class="mt-2">₱99 only</p>
 
-    <!-- EMAIL INPUT -->
-    <input id="buyerEmail" type="email" placeholder="Enter your REAL email" 
-      class="w-full p-3 border rounded mb-3" required>
+  <input id="buyerEmail" type="email" placeholder="Enter your REAL email" class="w-full p-3 mt-4 border rounded">
 
-    <p id="emailError" class="text-red-500 text-sm mb-3 hidden">❌ Invalid email format</p>
+  <button id="payBtn" class="bg-green-700 text-white w-full py-3 rounded-xl mt-4">Pay via PayMaya / MariBank</button>
 
-    <!-- PROOF UPLOAD (optional) -->
-    <input id="proof" type="file" accept="image/*" class="w-full mb-3">
+  <button id="confirmBtn" class="bg-blue-600 text-white w-full py-3 rounded-xl mt-2">✔ I Already Paid</button>
 
-    <!-- PAY BUTTON -->
-    <button id="payBtn" class="bg-green-700 text-white w-full py-3 rounded-xl hover:bg-green-800">Pay via PayMaya / MariBank</button>
+  <!-- LOCKED DOWNLOAD -->
+  <button id="downloadBtn" disabled class="bg-gray-400 text-white w-full py-3 rounded-xl mt-2">🔒 Waiting for Approval</button>
 
-    <!-- CONFIRM BUTTON -->
-    <button id="confirmBtn" disabled class="mt-3 bg-blue-500 text-white px-6 py-3 rounded-xl w-full opacity-50">✔ I Already Paid</button>
-
-    <!-- DOWNLOAD (LOCKED UNTIL YOU APPROVE MANUALLY) -->
-    <button id="downloadBtn" disabled class="mt-4 bg-gray-400 text-white px-6 py-3 rounded-xl w-full">🔒 Waiting for Approval</button>
-
-    <p class="text-sm text-gray-500 mt-3">After payment, wait for approval via email before downloading.</p>
-  </div>
+  <p class="text-sm text-gray-500 mt-2">After payment, wait for admin approval via email.</p>
 </section>
-
-<footer class="text-center p-6 text-gray-600">
-  <p>© 2026 Digital Passive Money</p>
-</footer>
 
 <script>
 
-// INIT EMAILJS
-emailjs.init("YOUR_PUBLIC_KEY");
+// INIT EMAILJS (PUT YOUR REAL KEY)
+(function(){
+  emailjs.init("user_8iytg7VgLwbzPRXCp");
+})();
 
-const payBtn = document.getElementById("payBtn");
-const confirmBtn = document.getElementById("confirmBtn");
-const downloadBtn = document.getElementById("downloadBtn");
-const emailInput = document.getElementById("buyerEmail");
-const emailError = document.getElementById("emailError");
-
-// EMAIL VALIDATION
-function isValidEmail(email){
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(email);
+// VALID EMAIL FUNCTION
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// STEP 1: PAYMENT INFO
+// PAYMENT BUTTON
+const payBtn = document.getElementById("payBtn");
 payBtn.addEventListener("click", function(){
-  const email = emailInput.value.trim();
-
-  if(!isValidEmail(email)){
-    emailError.classList.remove("hidden");
-    return;
-  }
-
-  emailError.classList.add("hidden");
-
-  alert("Send ₱99 to:\n\n09462763255 (PayMaya / MariBank)\n\nAfter payment, click 'I Already Paid'");
-
-  confirmBtn.disabled = false;
-  confirmBtn.classList.remove("opacity-50");
+  alert("Send ₱99 to:\n\n09462763255 (PayMaya/MariBank)\n\nThen click 'I Already Paid'");
 });
 
-// STEP 2: CONFIRM PAYMENT → EMAIL ONLY TO YOU (ADMIN)
+// CONFIRM BUTTON (SECURE SYSTEM)
+const confirmBtn = document.getElementById("confirmBtn");
 confirmBtn.addEventListener("click", function(){
-  const email = emailInput.value.trim();
+
+  let email = document.getElementById("buyerEmail").value.trim();
 
   if(!isValidEmail(email)){
-    emailError.classList.remove("hidden");
+    alert("Please enter a valid email.");
     return;
   }
 
-  emailError.classList.add("hidden");
-
-  // SEND EMAIL TO YOU (ADMIN NOTIFICATION)
-  emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{
+  // SEND EMAIL TO YOU (ADMIN ALERT)
+  emailjs.send("service_03g5xfv", "template_a81aptc", {
     buyer_email: email,
     message: "New payment submitted. Verify before giving access."
-  }).then(function(){
-    alert("Payment submitted! Please wait for approval via email before downloading.");
-  }).catch(function(error){
-    alert("Error sending request. Try again.");
+  })
+  .then(function(){
+    alert("Payment submitted! Wait for approval via email.");
+  })
+  .catch(function(error){
+    console.error(error);
+    alert("Error sending email. Check setup.");
   });
 
 });
 
-// DOWNLOAD STILL LOCKED (MANUAL APPROVAL SYSTEM)
+// DOWNLOAD BLOCKED UNTIL YOU APPROVE
+const downloadBtn = document.getElementById("downloadBtn");
 downloadBtn.addEventListener("click", function(){
   alert("Access locked. Wait for admin approval.");
 });
 
-// TEST
-console.log("SECURE MODE ACTIVE:");
-console.log("1. Buyer enters email");
-console.log("2. Confirms payment");
-console.log("3. YOU receive email");
-console.log("4. YOU manually send ebook access");
+// TEST CASES
+console.log("TEST CASES:");
+console.log("1. Invalid email → should show error");
+console.log("2. Valid email → should send email to admin");
+console.log("3. Download click → should stay locked");
 
 </script>
 
 </body>
 </html>
+
 
 
 
