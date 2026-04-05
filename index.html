@@ -76,7 +76,7 @@
 
 // INIT EMAILJS (PUT YOUR REAL KEY)
 (function(){
-  emailjs.init("user_8iytg7VgLwbzPRXCp");
+  emailjs.init("8iytg7VgLwbzPRXCp");
 })();
 
 // VALID EMAIL FUNCTION
@@ -104,14 +104,21 @@ confirmBtn.addEventListener("click", function(){
   // SEND EMAIL TO YOU (ADMIN ALERT)
   emailjs.send("service_03g5xfv","template_a81aptc", {
     buyer_email: email,
-    message: "New payment submitted. Verify before giving access."
+    message: "New payment submitted. Verify before giving access.",
+    to_email: "valentinolestonis14@gmail.com",
+    reply_to: email,
+    from_name: "New Buyer"
   })
   .then(function(){
     alert("Payment submitted! Wait for approval via email.");
   })
   .catch(function(error){
-    console.error(error);
-    alert("Error sending email. Check setup.");
+    console.error("FULL ERROR:", error);
+    if(error && error.text){
+      alert("Error: " + error.text);
+    } else {
+      alert("Error sending email. Check setup.");
+    }
   });
 
 });
@@ -132,9 +139,6 @@ console.log("3. Download click → should stay locked");
 
 </body>
 </html>
-
-
-
 
 
 
