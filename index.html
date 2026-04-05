@@ -123,11 +123,11 @@ function approveBuyer(index){
   let buyers = JSON.parse(localStorage.getItem("buyers"));
   let buyer = buyers[index];
 
-  emailjs.send("service_03g5xfv","template_a81aptc", {
-    buyer_email: buyer.email,
-    message: "Your payment is approved! Download your eBook here: https://drive.google.com/file/d/YOUR_FILE_ID/view",
-    to_email: buyer.email
-  })
+emailjs.send("service_03g5xfv","template_a81aptc", {
+  buyer_email: buyer.email,
+  message: "Your payment is approved! 🎉\n\nDownload your eBook here:\nhttps://drive.google.com/uc?export=view&id=1zxGjDCIPNcL953Zomk39F0IMemeRN8H5\n\nThank you for your purchase! 💰",
+  to_email: buyer.email
+})
   .then(()=>{
     alert("Ebook sent to buyer!");
     buyers[index].status = "Approved";
