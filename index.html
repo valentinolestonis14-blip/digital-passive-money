@@ -22,7 +22,7 @@
   <p class="mt-2 text-sm">By LESTONES TIN | Partner: ChatGPT</p>
 </section>
 
-<!-- VALUE SECTION -->
+<!-- VALUE -->
 <section class="p-10 max-w-6xl mx-auto text-center">
   <h2 class="text-3xl font-bold text-green-700 mb-8">Why This eBook?</h2>
   <div class="grid md:grid-cols-3 gap-6">
@@ -46,13 +46,18 @@
   </div>
 </section>
 
-<!-- TESTIMONIAL -->
 <section class="p-10 max-w-4xl mx-auto text-center">
   <div class="bg-white p-6 rounded-2xl shadow">
     <h2 class="text-2xl font-bold text-green-700 mb-3">💬 Student Feedback</h2>
     <p class="italic">“Simple and easy to follow. Nakapag-start ako ng freelancing dahil dito.”</p>
     <p class="mt-2 text-sm">– Student User</p>
   </div>
+</section>
+
+<!-- ADMIN DASHBOARD -->
+<section class="p-6 max-w-5xl mx-auto">
+  <h2 class="text-2xl font-bold text-green-700 mb-4">🛠 Admin Dashboard (Local)</h2>
+  <div id="adminList" class="bg-white p-4 rounded-xl shadow text-left text-sm"></div>
 </section>
 
 <!-- BUY SECTION -->
@@ -62,83 +67,111 @@
 
   <input id="buyerEmail" type="email" placeholder="Enter your REAL email" class="w-full p-3 mt-4 border rounded">
 
+  <input id="proof" type="file" accept="image/*" class="w-full p-3 mt-3 border rounded">
+
   <button id="payBtn" class="bg-green-700 text-white w-full py-3 rounded-xl mt-4">Pay via PayMaya / MariBank</button>
 
   <button id="confirmBtn" class="bg-blue-600 text-white w-full py-3 rounded-xl mt-2">✔ I Already Paid</button>
 
-  <!-- LOCKED DOWNLOAD -->
   <button id="downloadBtn" disabled class="bg-gray-400 text-white w-full py-3 rounded-xl mt-2">🔒 Waiting for Approval</button>
-
-  <p class="text-sm text-gray-500 mt-2">After payment, wait for admin approval via email.</p>
 </section>
 
 <script>
 
-// INIT EMAILJS (PUT YOUR REAL KEY)
-(function(){
-  emailjs.init("8iytg7VgLwbzPRXCp");
-})();
+emailjs.init("8iytg7VgLwbzPRXCp");
 
-// VALID EMAIL FUNCTION
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// PAYMENT BUTTON
+let hasClickedPay = false;
+
 const payBtn = document.getElementById("payBtn");
 payBtn.addEventListener("click", function(){
-  alert("Send ₱99 to:\n\n09462763255 (PayMaya/MariBank)\n\nThen click 'I Already Paid'");
+  hasClickedPay = true;
+  alert("Send ₱99 to:\n\n09462763255\n\nUpload proof then click confirm");
 });
 
-// CONFIRM BUTTON (SECURE SYSTEM)
+// SAVE BUYER TO LOCAL STORAGE (DASHBOARD)
+function saveBuyer(email, proofName){
+  let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
+  buyers.push({email, proof: proofName, status: "Pending"});
+  localStorage.setItem("buyers", JSON.stringify(buyers));
+  renderAdmin();
+}
+
+// RENDER ADMIN DASHBOARD
+function renderAdmin(){
+  let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
+  let html = "";
+
+  buyers.forEach((b, index)=>{
+    html += `
+      <div class="border-b py-2">
+        <b>${b.email}</b> | Proof: ${b.proof} | Status: ${b.status}
+        <br>
+        <button onclick="approveBuyer(${index})" class="bg-green-600 text-white px-2 py-1 mt-1 rounded">Approve</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("adminList").innerHTML = html;
+}
+
+// APPROVE BUYER (AUTO SEND EBOOK)
+function approveBuyer(index){
+  let buyers = JSON.parse(localStorage.getItem("buyers"));
+  let buyer = buyers[index];
+
+  emailjs.send("service_03g5xfv","template_a81aptc", {
+    buyer_email: buyer.email,
+    message: "Your payment is approved! Download your eBook here: https://drive.google.com/file/d/YOUR_FILE_ID/view",
+    to_email: buyer.email
+  })
+  .then(()=>{
+    alert("Ebook sent to buyer!");
+    buyers[index].status = "Approved";
+    localStorage.setItem("buyers", JSON.stringify(buyers));
+    renderAdmin();
+  });
+}
+
 const confirmBtn = document.getElementById("confirmBtn");
 confirmBtn.addEventListener("click", function(){
 
   let email = document.getElementById("buyerEmail").value.trim();
+  let proof = document.getElementById("proof").files[0];
 
   if(!isValidEmail(email)){
-    alert("Please enter a valid email.");
-    return;
+    alert("Invalid email"); return;
   }
 
-  // SEND EMAIL TO YOU (ADMIN ALERT)
+  if(!hasClickedPay){
+    alert("Click payment first"); return;
+  }
+
+  if(!proof){
+    alert("Upload proof"); return;
+  }
+
+  saveBuyer(email, proof.name);
+
   emailjs.send("service_03g5xfv","template_a81aptc", {
     buyer_email: email,
-    message: "New payment submitted. Verify before giving access.",
-    to_email: "valentinolestonis14@gmail.com",
-    reply_to: email,
-    from_name: "New Buyer"
-  })
-  .then(function(){
-    alert("Payment submitted! Wait for approval via email.");
-  })
-  .catch(function(error){
-    console.error("FULL ERROR:", error);
-    if(error && error.text){
-      alert("Error: " + error.text);
-    } else {
-      alert("Error sending email. Check setup.");
-    }
+    message: "New buyer submitted payment with proof: " + proof.name,
+    to_email: "valentinolestonis14@gmail.com"
   });
 
+  alert("Submitted! Wait for approval.");
 });
 
-// DOWNLOAD BLOCKED UNTIL YOU APPROVE
-const downloadBtn = document.getElementById("downloadBtn");
-downloadBtn.addEventListener("click", function(){
-  alert("Access locked. Wait for admin approval.");
-});
-
-// TEST CASES
-console.log("TEST CASES:");
-console.log("1. Invalid email → should show error");
-console.log("2. Valid email → should send email to admin");
-console.log("3. Download click → should stay locked");
+renderAdmin();
 
 </script>
 
 </body>
 </html>
+
 
 
 
