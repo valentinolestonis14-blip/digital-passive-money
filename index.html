@@ -10,70 +10,99 @@
   <style>
     .fade-in { animation: fadeIn 0.9s ease-in-out; }
     @keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+
+    /* DR PEPPER STYLE COLORS */
+    .hero-bg {
+      background: radial-gradient(circle at center, #8B1E2D 0%, #5A0F1C 60%, #3A0A12 100%);
+    }
+
+    .glow {
+      text-shadow: 0 0 20px rgba(255,255,255,0.4);
+    }
+
+    .card-hover:hover {
+      transform: translateY(-6px);
+      transition: 0.3s;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+
+    .wave {
+      position: relative;
+      height: 80px;
+      overflow: hidden;
+    }
+
+    .wave::before {
+      content: "";
+      position: absolute;
+      width: 200%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 0%, #3A0A12 20%, transparent 70%);
+      top: -40px;
+      left: -50%;
+    }
   </style>
 </head>
-<body class="bg-green-50 font-sans">
+<body class="bg-[#3A0A12] text-white font-sans">
 
 <!-- HERO -->
-<section class="bg-gradient-to-r from-green-800 to-green-500 text-white text-center p-14 fade-in">
-  <div class="text-6xl mb-4">💸🇵🇭</div>
-  <h1 class="text-4xl font-bold">Digital Passive Money</h1>
-  <p class="text-lg">Turn ChatGPT into your income source</p>
-  <p class="mt-2 text-sm">By LESTONES TIN | Partner: ChatGPT</p>
+<section class="hero-bg p-14 fade-in">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between">
+    <div class="text-left max-w-xl">
+      <h1 class="text-5xl font-bold glow">NOT FOR EVERYONE.<br>ONLY FOR EARNERS.</h1>
+      <p class="mt-4 text-lg text-gray-200">Turn ChatGPT into your income source 💻💰</p>
+      <div class="mt-6">
+        <a href="#buy" class="bg-white text-[#5A0F1C] px-6 py-3 rounded-full font-semibold shadow-lg">GET YOUR COPY</a>
+      </div>
+    </div>
+
+    <div class="text-7xl mt-10 md:mt-0">💸📈</div>
+  </div>
 </section>
+
+<div class="wave"></div>
 
 <!-- VALUE -->
 <section class="p-10 max-w-6xl mx-auto text-center">
-  <h2 class="text-3xl font-bold text-green-700 mb-8">Why This eBook?</h2>
+  <h2 class="text-3xl font-bold mb-8">Why This eBook?</h2>
   <div class="grid md:grid-cols-3 gap-6">
-    <div class="bg-white p-6 rounded-2xl shadow">💼<br><b>Real Income Ideas</b><br>Tested ways to earn online</div>
-    <div class="bg-white p-6 rounded-2xl shadow">📘<br><b>Beginner Friendly</b><br>No experience needed</div>
-    <div class="bg-white p-6 rounded-2xl shadow">💰<br><b>Low Capital</b><br>Start with what you have</div>
+    <div class="bg-[#5A0F1C] p-6 rounded-2xl card-hover">💼<br><b>Real Income Ideas</b><br>Tested ways to earn online</div>
+    <div class="bg-[#5A0F1C] p-6 rounded-2xl card-hover">📘<br><b>Beginner Friendly</b><br>No experience needed</div>
+    <div class="bg-[#5A0F1C] p-6 rounded-2xl card-hover">📈<br><b>Money Growth</b><br>Build your income step-by-step</div>
   </div>
 </section>
 
-<!-- PREVIEW -->
-<section class="p-10 max-w-4xl mx-auto">
-  <div class="bg-white p-8 rounded-2xl shadow">
-    <h2 class="text-3xl font-bold mb-4">📘 What You’ll Learn</h2>
-    <ul class="list-disc ml-6 mt-4 space-y-2">
-      <li>Freelancing using ChatGPT</li>
-      <li>Managing social media for businesses</li>
-      <li>Creating digital products</li>
-      <li>Building content on TikTok & YouTube</li>
-      <li>Offering AI services</li>
-    </ul>
+<!-- BRAND MESSAGE -->
+<section class="p-10 max-w-5xl mx-auto flex flex-col md:flex-row items-center">
+  <div class="md:w-1/2">
+    <h2 class="text-3xl font-bold">SMART WORK. REAL MONEY.</h2>
+    <p class="mt-4 text-gray-300">Learn how to use AI tools to create income streams, even as a student.</p>
+  </div>
+  <div class="md:w-1/2 text-center text-6xl mt-6 md:mt-0">💻 ➜ 💰 ➜ 📈</div>
+</section>
+
+<!-- OFFER -->
+<section class="p-10 max-w-5xl mx-auto text-center">
+  <h2 class="text-3xl font-bold mb-6">What You’ll Learn</h2>
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="bg-[#5A0F1C] p-6 rounded-xl card-hover">💸 Earn Online</div>
+    <div class="bg-[#5A0F1C] p-6 rounded-xl card-hover">📱 Content Creation</div>
+    <div class="bg-[#5A0F1C] p-6 rounded-xl card-hover">🧠 Smart Strategies</div>
   </div>
 </section>
 
-<section class="p-10 max-w-4xl mx-auto text-center">
-  <div class="bg-white p-6 rounded-2xl shadow">
-    <h2 class="text-2xl font-bold text-green-700 mb-3">💬 Student Feedback</h2>
-    <p class="italic">“Simple and easy to follow. Nakapag-start ako ng freelancing dahil dito.”</p>
-    <p class="mt-2 text-sm">– Student User</p>
-  </div>
-</section>
+<!-- CTA -->
+<section id="buy" class="p-12 text-center hero-bg">
+  <h2 class="text-4xl font-bold glow">START YOUR JOURNEY TODAY</h2>
+  <p class="mt-2 text-xl">₱99 only</p>
 
-<!-- ADMIN DASHBOARD -->
-<section class="p-6 max-w-5xl mx-auto">
-  <h2 class="text-2xl font-bold text-green-700 mb-4">🛠 Admin Dashboard (Local)</h2>
-  <div id="adminList" class="bg-white p-4 rounded-xl shadow text-left text-sm"></div>
-</section>
+  <input id="buyerEmail" type="email" placeholder="Enter your REAL email" class="w-full max-w-md p-3 mt-6 border rounded text-black">
+  <input id="proof" type="file" accept="image/*" class="w-full max-w-md p-3 mt-3 border rounded text-black">
 
-<!-- BUY SECTION -->
-<section class="p-10 max-w-3xl mx-auto text-center">
-  <h2 class="text-3xl font-bold text-green-700">💰 Get Full eBook</h2>
-  <p class="mt-2">₱99 only</p>
+  <button id="payBtn" class="bg-white text-[#5A0F1C] w-full max-w-md py-3 rounded-xl mt-4">Pay via PayMaya / MariBank</button>
+  <button id="confirmBtn" class="bg-green-600 text-white w-full max-w-md py-3 rounded-xl mt-2">✔ I Already Paid</button>
 
-  <input id="buyerEmail" type="email" placeholder="Enter your REAL email" class="w-full p-3 mt-4 border rounded">
-
-  <input id="proof" type="file" accept="image/*" class="w-full p-3 mt-3 border rounded">
-
-  <button id="payBtn" class="bg-green-700 text-white w-full py-3 rounded-xl mt-4">Pay via PayMaya / MariBank</button>
-
-  <button id="confirmBtn" class="bg-blue-600 text-white w-full py-3 rounded-xl mt-2">✔ I Already Paid</button>
-
-  <button id="downloadBtn" disabled class="bg-gray-400 text-white w-full py-3 rounded-xl mt-2">🔒 Waiting for Approval</button>
+  <button id="downloadBtn" disabled class="bg-gray-400 text-white w-full max-w-md py-3 rounded-xl mt-2">🔒 Waiting for Approval</button>
 </section>
 
 <script>
@@ -92,7 +121,6 @@ payBtn.addEventListener("click", function(){
   alert("Send ₱99 to:\n\n09462763255\n\nUpload proof then click confirm");
 });
 
-// SAVE BUYER TO LOCAL STORAGE (DASHBOARD)
 function saveBuyer(email, proofName){
   let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
   buyers.push({email, proof: proofName, status: "Pending"});
@@ -100,14 +128,13 @@ function saveBuyer(email, proofName){
   renderAdmin();
 }
 
-// RENDER ADMIN DASHBOARD
 function renderAdmin(){
   let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
   let html = "";
 
   buyers.forEach((b, index)=>{
     html += `
-      <div class="border-b py-2">
+      <div class="border-b py-2 text-black">
         <b>${b.email}</b> | Proof: ${b.proof} | Status: ${b.status}
         <br>
         <button onclick="approveBuyer(${index})" class="bg-green-600 text-white px-2 py-1 mt-1 rounded">Approve</button>
@@ -115,22 +142,18 @@ function renderAdmin(){
     `;
   });
 
-  document.getElementById("adminList").innerHTML = html;
+  if(document.getElementById("adminList")){
+    document.getElementById("adminList").innerHTML = html;
+  }
 }
 
-// APPROVE BUYER (AUTO SEND EBOOK)
 function approveBuyer(index){
   let buyers = JSON.parse(localStorage.getItem("buyers"));
   let buyer = buyers[index];
 
   emailjs.send("service_03g5xfv","template_a81aptc", {
     buyer_email: buyer.email,
-    message: `Your payment is approved! 🎉
-
-Download your eBook here:
-https://drive.google.com/uc?export=view&id=1zxGjDCIPNcL953Zomk39F0IMemeRN8H5
-
-Thank you for your purchase! 💰`,
+    message: `Your payment is approved! 🎉\n\nDownload your eBook here:\nhttps://drive.google.com/uc?export=view&id=1zxGjDCIPNcL953Zomk39F0IMemeRN8H5\n\nThank you for your purchase! 💰`,
     to_email: buyer.email
   })
   .then(()=>{
@@ -180,6 +203,7 @@ renderAdmin();
 
 </body>
 </html>
+
 
 
 
