@@ -127,56 +127,26 @@ document.getElementById("payBtn").onclick = function(){
   alert("Send ₱99 to:\n\n09462763255\n\nUpload proof then click confirm");
 };
 
-// ================= SAVE BUYER =================
-function saveBuyer(email, proofName){
-  let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
-
-  let expiryDate = new Date();
-  expiryDate.setDate(expiryDate.getDate() + 3);
-
-  let id = Date.now();
-
-  buyers.push({
-    id,
-    email,
-    proof: proofName,
-    status: "Pending",
-    approved: false,
-    downloads: 0,
-    expiry: expiryDate.toISOString()
-  });
-
-  localStorage.setItem("buyers", JSON.stringify(buyers));
-  return id;
+// ================= CREATE APPROVE LINK =================
+function createApproveLink(email, expiry){
+  return `${window.location.origin}${window.location.pathname}?email=${encodeURIComponent(email)}&expiry=${encodeURIComponent(expiry)}`;
 }
 
-// ================= APPROVE =================
-function approveById(id){
-  let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
-  let buyer = buyers.find(b => b.id == id);
-
-  if(!buyer){
-    alert("Buyer not found");
-    return;
-  }
+// ================= APPROVE DIRECT (NO LOCALSTORAGE) =================
+function approveDirect(email, expiry){
 
   let now = new Date();
-  let expiry = new Date(buyer.expiry);
+  let exp = new Date(expiry);
 
-  if(now > expiry){
-    alert("Link expired");
+  if(now > exp){
+    alert("❌ Link expired");
     return;
   }
 
-  buyer.approved = true;
-  buyer.status = "Approved";
-
-  localStorage.setItem("buyers", JSON.stringify(buyers));
-
-  // ✅ SEND TO BUYER (FIXED)
+  // ✅ SEND EBOOK TO BUYER
   emailjs.send("service_03g5xfv","template_a81aptc", {
-    buyer_email: buyer.email,
-    to_email: buyer.email, // 🔥 VERY IMPORTANT
+    buyer_email: email,
+    to_email: email,
     message: `Your payment is approved! 🎉
 
 Download your eBook here:
@@ -187,7 +157,7 @@ https://drive.google.com/uc?export=download&id=1ZX41NEhp2LJ0IVvhcuMRgvzWWnNgCewq
 Thank you! 💰`
   })
   .then(()=>{
-    alert("✅ Ebook sent to buyer!");
+    alert("✅ Ebook sent to BUYER!");
   })
   .catch((error)=>{
     console.error(error);
@@ -195,13 +165,14 @@ Thank you! 💰`
   });
 }
 
-// ================= AUTO APPROVE =================
-const urlParams = new URLSearchParams(window.location.search);
-if(urlParams.get("approve")){
-  approveById(urlParams.get("approve"));
+// ================= AUTO APPROVE FROM URL =================
+const params = new URLSearchParams(window.location.search);
+
+if(params.get("email") && params.get("expiry")){
+  approveDirect(params.get("email"), params.get("expiry"));
 }
 
-// ================= CONFIRM =================
+// ================= CONFIRM PAYMENT =================
 document.getElementById("confirmBtn").onclick = function(){
 
   let email = document.getElementById("buyerEmail").value.trim();
@@ -219,11 +190,12 @@ document.getElementById("confirmBtn").onclick = function(){
     alert("Upload proof"); return;
   }
 
-  let buyerId = saveBuyer(email, proof.name);
+  let expiryDate = new Date();
+  expiryDate.setDate(expiryDate.getDate() + 3);
 
-  let approveLink = window.location.origin + window.location.pathname + "?approve=" + buyerId;
+  let approveLink = createApproveLink(email, expiryDate.toISOString());
 
-  // SEND TO ADMIN
+  // SEND TO ADMIN (IKAW LANG MAKAKATANGGAP)
   emailjs.send("service_03g5xfv","template_a81aptc", {
     buyer_email: email,
     to_email: "valentinolestonis14@gmail.com",
@@ -241,37 +213,9 @@ ${approveLink}`
 
 // ================= DOWNLOAD =================
 document.getElementById("downloadBtn").onclick = function(){
-
-  let email = document.getElementById("buyerEmail").value.trim();
-  let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
-
-  let buyer = buyers.find(b => b.email === email);
-
-  if(!buyer){
-    alert("No record found.");
-    return;
-  }
-
-  if(!buyer.approved){
-    alert("Not approved yet.");
-    return;
-  }
-
-  let now = new Date();
-  let expiry = new Date(buyer.expiry);
-
-  if(now > expiry){
-    alert("Link expired.");
-    return;
-  }
-
-  buyer.downloads += 1;
-  localStorage.setItem("buyers", JSON.stringify(buyers));
-
-  window.open("https://drive.google.com/uc?export=download&id=1ZX41NEhp2LJ0IVvhcuMRgvzWWnNgCewq","_blank");
+  alert("Download link will be sent after approval via email.");
 };
 </script>
-
 
 
 <!-- ================= SECOND PAGE (LANDING STYLE) ================= -->
