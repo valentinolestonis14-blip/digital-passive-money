@@ -121,76 +121,30 @@ function isValidEmail(email) {
 
 let hasClickedPay = false;
 
-// ================= PAY BUTTON =================
-const payBtn = document.getElementById("payBtn");
-payBtn.addEventListener("click", function(){
+// ================= PAY =================
+document.getElementById("payBtn").onclick = function(){
   hasClickedPay = true;
   alert("Send ₱99 to:\n\n09462763255\n\nUpload proof then click confirm");
-});
+};
 
-// ================= SAVE BUYER =================
-function saveBuyer(email, proofName){
-  let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
-
-  let expiryDate = new Date();
-  expiryDate.setDate(expiryDate.getDate() + 3);
-
-  buyers.push({
-    email,
-    proof: proofName,
-    status: "Pending",
-    approved: false,
-    downloads: 0,
-    expiry: expiryDate.toISOString()
-  });
-
-  localStorage.setItem("buyers", JSON.stringify(buyers));
-  renderAdmin();
+// ================= CREATE APPROVE LINK =================
+function createApproveLink(email, expiry){
+  return `${window.location.origin}${window.location.pathname}?email=${encodeURIComponent(email)}&expiry=${encodeURIComponent(expiry)}`;
 }
 
-// ================= ADMIN VIEW =================
-function renderAdmin(){
-  let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
-  let html = "";
-
-  buyers.forEach((b, index)=>{
-    html += `
-      <div class="border-b py-2 text-black">
-        <b>${b.email}</b><br>
-        Proof: ${b.proof}<br>
-        Status: ${b.status}<br>
-        Downloads: ${b.downloads}<br>
-        <button onclick="approveBuyer(${index})" class="bg-green-600 text-white px-2 py-1 mt-1 rounded">Approve</button>
-      </div>
-    `;
-  });
-
-  if(document.getElementById("adminList")){
-    document.getElementById("adminList").innerHTML = html;
-  }
-}
-
-// ================= APPROVE BUYER =================
-function approveBuyer(index){
-  let buyers = JSON.parse(localStorage.getItem("buyers"));
-  let buyer = buyers[index];
+// ================= APPROVE FUNCTION =================
+function approveDirect(email, expiry){
 
   let now = new Date();
-  let expiry = new Date(buyer.expiry);
+  let exp = new Date(expiry);
 
-  if(now > expiry){
-    alert("Link expired.");
+  if(now > exp){
+    alert("❌ Link expired");
     return;
   }
 
-  buyer.approved = true;
-  buyer.downloads += 1;
-  buyers[index].status = "Approved";
-
-  localStorage.setItem("buyers", JSON.stringify(buyers));
-
   emailjs.send("service_03g5xfv","template_a81aptc", {
-    buyer_email: buyer.email,
+    buyer_email: email,
     message: `Your payment is approved! 🎉
 
 Download your eBook here:
@@ -199,22 +153,27 @@ https://drive.google.com/uc?export=download&id=1ZX41NEhp2LJ0IVvhcuMRgvzWWnNgCewq
 ⚠️ Expires in 3 days
 
 Thank you! 💰`,
-    to_email: buyer.email
+    to_email: email
   })
   .then(()=>{
-    alert("Approved + Email sent!");
-    renderAdmin();
+    alert("✅ Ebook sent to buyer!");
   })
   .catch((error)=>{
     console.error(error);
-    alert("Email failed.");
+    alert("❌ Email failed");
   });
 }
 
-// ================= CONFIRM PAYMENT =================
-const confirmBtn = document.getElementById("confirmBtn");
+// ================= AUTO APPROVE FROM LINK =================
+const params = new URLSearchParams(window.location.search);
 
-confirmBtn.addEventListener("click", function(){
+if(params.get("email") && params.get("expiry")){
+  approveDirect(params.get("email"), params.get("expiry"));
+}
+
+// ================= CONFIRM PAYMENT =================
+document.getElementById("confirmBtn").onclick = function(){
+
   let email = document.getElementById("buyerEmail").value.trim();
   let proof = document.getElementById("proof").files[0];
 
@@ -230,57 +189,31 @@ confirmBtn.addEventListener("click", function(){
     alert("Upload proof"); return;
   }
 
-  saveBuyer(email, proof.name);
+  let expiryDate = new Date();
+  expiryDate.setDate(expiryDate.getDate() + 3);
 
-  // Notify admin
+  let approveLink = createApproveLink(email, expiryDate.toISOString());
+
+  // SEND EMAIL TO ADMIN
   emailjs.send("service_03g5xfv","template_a81aptc", {
     buyer_email: email,
-    message: "New buyer submitted payment with proof: " + proof.name,
+    message: `New buyer!
+
+Email: ${email}
+Proof: ${proof.name}
+
+👉 CLICK TO APPROVE:
+${approveLink}`,
     to_email: "valentinolestonis14@gmail.com"
   });
 
   alert("Submitted! Wait for approval.");
-});
-
-// ================= DOWNLOAD CONTROL =================
-const downloadBtn = document.getElementById("downloadBtn");
-
-downloadBtn.onclick = function(){
-  let email = document.getElementById("buyerEmail").value.trim();
-  let buyers = JSON.parse(localStorage.getItem("buyers") || "[]");
-
-  let buyer = buyers.find(b => b.email === email);
-
-  if(!buyer){
-    alert("No record found.");
-    return;
-  }
-
-  if(!buyer.approved){
-    alert("Not approved yet.");
-    return;
-  }
-
-  let now = new Date();
-  let expiry = new Date(buyer.expiry);
-
-  if(now > expiry){
-    alert("Link expired.");
-    return;
-  }
-
-  buyer.downloads += 1;
-  localStorage.setItem("buyers", JSON.stringify(buyers));
-
-  window.open(
-    "https://drive.google.com/uc?export=download&id=1ZX41NEhp2LJ0IVvhcuMRgvzWWnNgCewq",
-    "_blank"
-  );
 };
 
-// INIT
-renderAdmin();
-
+// ================= DOWNLOAD =================
+document.getElementById("downloadBtn").onclick = function(){
+  alert("You will receive download link after approval via email.");
+};
 </script>
 
 
